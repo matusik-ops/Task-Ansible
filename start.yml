@@ -1,0 +1,5 @@
+- name: matkova webka
+  hosts: localhost
+  become: yes
+  roles:
+    - post-install
