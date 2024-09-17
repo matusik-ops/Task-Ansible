@@ -1,0 +1,59 @@
+---
+# tasks file for post-install
+
+#install app
+- name: Install a list of packages
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+    - git
+    - python3-pip
+
+- name: install Flask
+  ansible.builtin.command: pip install Flask --break-system-packages
+
+#install NGX $ copy config file & restart service
+- name: install NGx
+  apt: 
+    name: nginx
+    state: present 
+  register: check 
+
+- name: start NGx service 
+  service:
+    name: nginx
+    state: started
+    enabled: yes 
+
+- name: check if NGx is already installed
+  debug:
+    msg: "Nginx is already installed"
+  when: check.changed == False
+
+- name: copy NGx config file defaults
+  ansible.builtin.copy:
+    src: /home/martin/Desktop/DevOps/zadanie-1/Task-Ansible/default
+    dest: /etc/nginx/sites-available  # link to /path/to/file
+    follow: yes
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
+
+# create unit file in systemd with flask file
+
+- name: copy unit file
+  ansible.builtin.copy:
+    src: /home/martin/Desktop/DevOps/zadanie-1/Task-Ansible/matko.service
+    dest: /etc/systemd/system  # link to /path/to/file
+
+- name: Enable service matko.service and ensure it is not masked
+  ansible.builtin.systemd_service:
+    name: matko.service
+    daemon_reload: true
+    enabled: true
+    state: started
+
+
+  
