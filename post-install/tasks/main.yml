@@ -3,12 +3,12 @@
 
 #install app
 
-#- name: Install a list of packages
-#  ansible.builtin.apt:
-#    update_cache: yes
-#    pkg:
+- name: Install a list of packages
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
 #    - git
-#    - python3-pip
+    - python3-pip
   
 - name: Install bottle python package
   ansible.builtin.pip:
