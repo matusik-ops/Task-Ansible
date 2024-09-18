@@ -2,17 +2,20 @@
 # tasks file for post-install
 
 #install app
-- name: Install a list of packages
-  ansible.builtin.apt:
-    update_cache: yes
-    pkg:
-    - git
-    - python3-pip
 
-- name: install Flask
-  ansible.builtin.command: pip install Flask --break-system-packages
+#- name: Install a list of packages
+#  ansible.builtin.apt:
+#    update_cache: yes
+#    pkg:
+#    - git
+#    - python3-pip
+  
+- name: Install bottle python package
+  ansible.builtin.pip:
+    name: flask
+    state: present
 
-#install NGX $ copy config file & restart service
+  #install NGX $ copy config file & restart service
 - name: install NGx
   apt: 
     name: nginx
@@ -32,7 +35,7 @@
 
 - name: copy NGx config file defaults
   ansible.builtin.copy:
-    src: /home/martin/Desktop/DevOps/zadanie-1/Task-Ansible/default
+    src: /home/vagrant/Task-Ansible/default
     dest: /etc/nginx/sites-available  # link to /path/to/file
     follow: yes
 
@@ -45,7 +48,7 @@
 
 - name: copy unit file
   ansible.builtin.copy:
-    src: /home/martin/Desktop/DevOps/zadanie-1/Task-Ansible/matko.service
+    src: /home/vagrant/Task-Ansible/matko.service
     dest: /etc/systemd/system  # link to /path/to/file
 
 - name: Enable service matko.service and ensure it is not masked
