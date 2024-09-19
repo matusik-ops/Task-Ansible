@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
   #login: vagrant ssh vm1
 
   config.vm.define "vm1" do |vm1|
-    vm1.vm.box = "bento/ubuntu-24.04"
+    vm1.vm.box = "bento/ubuntu-22.04"
     vm1.vm.hostname = "master"
     vm1.vm.network "private_network", ip: "192.168.56.11"
   #vm1.vm.network "public_network", bridge: "wlp3s0"
