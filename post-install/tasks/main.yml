@@ -9,12 +9,21 @@
     pkg:
 #    - git
     - python3-pip
-  
+
 - name: Install bottle python package
   ansible.builtin.pip:
     name: flask
     state: present
+      # extra_args: break-system-packages
 
+      #- name: Example clone of a single branch
+      # ansible.builtin.git:
+      #    repo: https://github.com/matusik-ops/Task-Ansible.git
+      # dest: /home/vagrant/Task-Ansible
+      #single_branch: yes
+      # version: sprint1     
+      #remote_src: yes 
+  
   #install NGX $ copy config file & restart service
 - name: install NGx
   apt: 
@@ -37,6 +46,7 @@
   ansible.builtin.copy:
     src: /home/vagrant/Task-Ansible/default
     dest: /etc/nginx/sites-available  # link to /path/to/file
+      #remote_src: yes
     follow: yes
 
 - name: Restart Nginx
@@ -50,6 +60,7 @@
   ansible.builtin.copy:
     src: /home/vagrant/Task-Ansible/matko.service
     dest: /etc/systemd/system  # link to /path/to/file
+      #remote_src: yes
 
 - name: Enable service matko.service and ensure it is not masked
   ansible.builtin.systemd_service:
