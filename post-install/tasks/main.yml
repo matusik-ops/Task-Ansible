@@ -2,17 +2,29 @@
 # tasks file for post-install
 
 #install app
+
 - name: Install a list of packages
   ansible.builtin.apt:
     update_cache: yes
     pkg:
-    - git
+#    - git
     - python3-pip
 
-- name: install Flask
-  ansible.builtin.command: pip install Flask --break-system-packages
+- name: Install bottle python package
+  ansible.builtin.pip:
+    name: flask
+    state: present
+      # extra_args: break-system-packages
 
-#install NGX $ copy config file & restart service
+- name: Example clone of a single branch
+  ansible.builtin.git:
+    repo: https://github.com/matusik-ops/Task-Ansible.git
+    dest: /home/vagrant/Task-Ansible
+    single_branch: yes
+    version: sprint1     
+    #remote_src: yes 
+  
+  #install NGX $ copy config file & restart service
 - name: install NGx
   apt: 
     name: nginx
@@ -32,8 +44,9 @@
 
 - name: copy NGx config file defaults
   ansible.builtin.copy:
-    src: /home/martin/Desktop/DevOps/zadanie-1/Task-Ansible/default
+    src: /home/vagrant/Task-Ansible/default
     dest: /etc/nginx/sites-available  # link to /path/to/file
+      #remote_src: yes
     follow: yes
 
 - name: Restart Nginx
@@ -45,8 +58,9 @@
 
 - name: copy unit file
   ansible.builtin.copy:
-    src: /home/martin/Desktop/DevOps/zadanie-1/Task-Ansible/matko.service
+    src: /home/vagrant/Task-Ansible/matko.service
     dest: /etc/systemd/system  # link to /path/to/file
+      #remote_src: yes
 
 - name: Enable service matko.service and ensure it is not masked
   ansible.builtin.systemd_service:
@@ -55,5 +69,35 @@
     enabled: true
     state: started
 
+- name: Install firewalld
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Start and enable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: Allow traffic from Ansible control node network
+  ansible.posix.firewalld:
+    source: "{{ ansible_control_node_network }}"
+    zone: public
+    state: enabled
+    immediate: yes
+    permanent: yes
+
+- name: Allow incoming HTTP, HTTPS and SSH traffic
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    zone: public
+    state: enabled
+    immediate: yes
+    permanent: yes
+  loop:
+    - http
+    - https
+    - ssh
 
   

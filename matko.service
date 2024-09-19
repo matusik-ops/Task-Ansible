@@ -3,8 +3,8 @@ Description=Flask comunication
 After=network.target
 
 [Service]
-User=ubuntu
-WorkingDirectory=/home/ubuntu/Task-Ansible
+User=vagrant
+WorkingDirectory=/home/vagrant/Task-Ansible
 ExecStart=/usr/bin/python3 /home/vagrant/Task-Ansible/app.py
 Restart=always
 
