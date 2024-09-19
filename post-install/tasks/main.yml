@@ -16,13 +16,13 @@
     state: present
       # extra_args: break-system-packages
 
-      #- name: Example clone of a single branch
-      # ansible.builtin.git:
-      #    repo: https://github.com/matusik-ops/Task-Ansible.git
-      # dest: /home/vagrant/Task-Ansible
-      #single_branch: yes
-      # version: sprint1     
-      #remote_src: yes 
+- name: Example clone of a single branch
+  ansible.builtin.git:
+    repo: https://github.com/matusik-ops/Task-Ansible.git
+    dest: /home/vagrant/Task-Ansible
+    single_branch: yes
+    version: sprint1     
+    #remote_src: yes 
   
   #install NGX $ copy config file & restart service
 - name: install NGx
@@ -69,5 +69,35 @@
     enabled: true
     state: started
 
+- name: Install firewalld
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Start and enable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: Allow traffic from Ansible control node network
+  ansible.posix.firewalld:
+    source: "{{ ansible_control_node_network }}"
+    zone: public
+    state: enabled
+    immediate: yes
+    permanent: yes
+
+- name: Allow incoming HTTP, HTTPS and SSH traffic
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    zone: public
+    state: enabled
+    immediate: yes
+    permanent: yes
+  loop:
+    - http
+    - https
+    - ssh
 
   

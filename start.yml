@@ -1,5 +1,7 @@
 - name: matkova webka
   hosts: all
   become: yes
+  vars:
+    ansible_control_node_network: "192.168.56.0/24"
   roles:
     - post-install
